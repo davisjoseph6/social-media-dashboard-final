@@ -30,3 +30,5 @@ Description and setup instructions for the project.
 
 Not using NodeJs or React, but with Apache, PHP, MySQL, and the traditional approach.
 
+
+Development logs: Postman
