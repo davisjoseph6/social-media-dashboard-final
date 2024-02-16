@@ -1,18 +1,14 @@
-'use strict';
+// ChatbotService/handler.js
+module.exports.chatbotInteraction = async (event) => {
+    const userMessage = JSON.parse(event.body).message;
 
-module.exports.hello = async (event) => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: 'Go Serverless v1.0! Your function executed successfully!',
-        input: event,
-      },
-      null,
-      2
-    ),
-  };
+    // Implement your chatbot logic here
+    // For simplicity, we're sending a static response
+    const botResponse = "Hello! How can I assist you today?";
 
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
+    return {
+        statusCode: 200,
+        body: JSON.stringify({ message: botResponse }),
+    };
 };
+
