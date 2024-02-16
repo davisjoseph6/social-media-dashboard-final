@@ -1,0 +1,50 @@
+service: posts-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+  environment:
+    POSTS_TABLE: postsTable
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:Query"
+            - "dynamodb:Scan"
+            - "dynamodb:GetItem"
+            - "dynamodb:PutItem"
+            - "dynamodb:DeleteItem"
+          Resource: "arn:aws:dynamodb:eu-west-3:123456789012:table/postsTable"
+
+functions:
+  createPost:
+    handler: handlers/createPost.handler
+    events:
+      - http:
+          path: posts
+          method: post
+  deletePost:
+    handler: handlers/deletePost.handler
+    events:
+      - http:
+          path: posts/{id}
+          method: delete
+
+resources:
+  Resources:
+    postsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.POSTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: "postId"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "postId"
+            KeyType: "HASH"
+        BillingMode: PAY_PER_REQUEST
+

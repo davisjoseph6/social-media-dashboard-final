@@ -1,0 +1,17 @@
+service: chatbot-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+
+functions:
+  chatbotInteraction:
+    handler: handlers/chatbotInteraction.handler
+    events:
+      - http:
+          path: chatbot
+          method: post
+

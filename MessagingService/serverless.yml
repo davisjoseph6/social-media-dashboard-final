@@ -1,0 +1,43 @@
+service: messaging-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+  environment:
+    MESSAGES_TABLE: messagesTable
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:Query"
+            - "dynamodb:Scan"
+            - "dynamodb:GetItem"
+            - "dynamodb:PutItem"
+          Resource: "arn:aws:dynamodb:eu-west-3:123456789012:table/messagesTable"
+
+functions:
+  sendMessage:
+    handler: handlers/sendMessage.handler
+    events:
+      - http:
+          path: messages/send
+          method: post
+
+resources:
+  Resources:
+    messagesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.MESSAGES_TABLE}
+        AttributeDefinitions:
+          - AttributeName: "messageId"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "messageId"
+            KeyType: "HASH"
+        BillingMode: PAY_PER_REQUEST
+
