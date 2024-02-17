@@ -14,18 +14,22 @@ provider:
         - Effect: "Allow"
           Action:
             - "dynamodb:Query"
-            - "dynamodb:Scan"
-            - "dynamodb:GetItem"
             - "dynamodb:PutItem"
-          Resource: "arn:aws:dynamodb:eu-west-3:123456789012:table/messagesTable"
+          Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MESSAGES_TABLE}"
 
 functions:
   sendMessage:
-    handler: handlers/sendMessage.handler
+    handler: handler.sendMessage
     events:
       - http:
           path: messages/send
           method: post
+  getMessages:
+    handler: handler.getMessages
+    events:
+      - http:
+          path: messages/retrieve/{conversationId}
+          method: get
 
 resources:
   Resources:
@@ -36,8 +40,17 @@ resources:
         AttributeDefinitions:
           - AttributeName: "messageId"
             AttributeType: "S"
+          - AttributeName: "conversationId"
+            AttributeType: "S"
         KeySchema:
           - AttributeName: "messageId"
             KeyType: "HASH"
+        GlobalSecondaryIndexes:
+          - IndexName: "ConversationIndex"
+            KeySchema:
+              - AttributeName: "conversationId"
+                KeyType: "HASH"
+            Projection:
+              ProjectionType: "ALL"
         BillingMode: PAY_PER_REQUEST
 

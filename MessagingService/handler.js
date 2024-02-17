@@ -1,18 +1,23 @@
-// PostsService/handler.js
+// MessagingService/handler.js
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const { POSTS_TABLE } = process.env;
+const { MESSAGES_TABLE } = process.env;
 
-module.exports.createPost = async (event) => {
-    const { userId, content } = JSON.parse(event.body);
+exports.sendMessage = async (event) => {
+    const { senderId, receiverId, content } = JSON.parse(event.body);
+    const timestamp = new Date().getTime();
+    const messageId = `${senderId}:${timestamp}`;
+    const conversationId = [senderId, receiverId].sort().join(':');
 
     const params = {
-        TableName: POSTS_TABLE,
+        TableName: MESSAGES_TABLE,
         Item: {
-            postId: userId + ":" + Date.now(), // Simple example for a unique post ID
-            userId,
+            messageId,
+            conversationId,
+            senderId,
+            receiverId,
+            timestamp,
             content,
-            createdAt: new Date().toISOString(),
         },
     };
 
@@ -20,12 +25,40 @@ module.exports.createPost = async (event) => {
         await dynamoDb.put(params).promise();
         return {
             statusCode: 200,
-            body: JSON.stringify({ message: 'Post created successfully' }),
+            body: JSON.stringify({ message: 'Message sent successfully' }),
         };
     } catch (error) {
+        console.error(error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Could not create post' }),
+            body: JSON.stringify({ error: 'Could not send message' }),
+        };
+    }
+};
+
+exports.getMessages = async (event) => {
+    const { conversationId } = event.pathParameters;
+
+    const params = {
+        TableName: MESSAGES_TABLE,
+        IndexName: 'ConversationIndex',
+        KeyConditionExpression: 'conversationId = :conversationId',
+        ExpressionAttributeValues: {
+            ':conversationId': conversationId,
+        },
+    };
+
+    try {
+        const data = await dynamoDb.query(params).promise();
+        return {
+            statusCode: 200,
+            body: JSON.stringify(data.Items),
+        };
+    } catch (error) {
+        console.error(error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Could not retrieve messages' }),
         };
     }
 };
