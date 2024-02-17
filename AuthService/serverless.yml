@@ -18,13 +18,13 @@ provider:
 
 functions:
   userRegistration:
-    handler: userRegistration.handler
+    handler: handler.userRegistration
     events:
       - http:
           path: users/register
           method: post
   userLogin:
-    handler: userLogin.handler
+    handler: handler.userLogin
     events:
       - http:
           path: users/login
