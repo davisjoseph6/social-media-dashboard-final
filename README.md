@@ -4,7 +4,7 @@
 
 - Authentication - registration and login. (If time allows using Facebook's Auth service).
 - Analytics of facebook posts.
-- home page with feed from facebook
+- home page with feed from facebook (and maybe Instagram)
 - make posts to facebook
 - messaging within the app
 - AI chatbot.
