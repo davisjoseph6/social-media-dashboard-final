@@ -37,6 +37,31 @@ Description and setup instructions for the project.
 
 Not using NodeJs or React, but with Apache, PHP, MySQL, and the traditional approach.
 
+Javascript code for Facebook
 
+
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '{your-app-id}',
+      cookie     : true,
+      xfbml      : true,
+      version    : '{api-version}'
+    });
+      
+    FB.AppEvents.logPageView();   
+      
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+
+Site URL: https://vc5xlq3iwg.execute-api.eu-west-3.amazonaws.com/dev/users/login
 
 Development logs: Postman..
