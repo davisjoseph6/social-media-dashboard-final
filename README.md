@@ -2,6 +2,13 @@
 ## with messenger and AI chatbot
 ## with analytics, posts page and home feed.
 
+- Authentication - registration and login. (If time allows using Facebook's Auth service).
+- Analytics of facebook posts.
+- home page with feed from facebook
+- make posts to facebook
+- messaging within the app
+- AI chatbot.
+
 # Social Media Dashboard Application.
 This project is a social media dashboard with messenger and AI chatbot features.
 
@@ -29,6 +36,7 @@ It has:
 Description and setup instructions for the project.
 
 Not using NodeJs or React, but with Apache, PHP, MySQL, and the traditional approach.
+
 
 
 Development logs: Postman..
