@@ -18,17 +18,17 @@ provider:
             - "dynamodb:GetItem"
             - "dynamodb:PutItem"
             - "dynamodb:DeleteItem"
-          Resource: "arn:aws:dynamodb:eu-west-3:123456789012:table/postsTable"
+          Resource: "arn:aws:dynamodb:eu-west-3:637423166046:table/postsTable"
 
 functions:
   createPost:
-    handler: handlers/createPost.handler
+    handler: handler.createPost
     events:
       - http:
           path: posts
           method: post
   deletePost:
-    handler: handlers/deletePost.handler
+    handler: handler.deletePost
     events:
       - http:
           path: posts/{id}
