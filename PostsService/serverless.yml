@@ -31,7 +31,7 @@ functions:
     handler: handler.deletePost
     events:
       - http:
-          path: posts/{id}
+          path: posts/{postId}
           method: delete
 
 resources:

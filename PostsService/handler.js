@@ -3,6 +3,7 @@ const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const { POSTS_TABLE } = process.env;
 
+// Function to handle post creation
 module.exports.createPost = async (event) => {
     console.log("Received event:", event);
     const { userId, content } = JSON.parse(event.body);
@@ -29,6 +30,34 @@ module.exports.createPost = async (event) => {
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'Could not create post', details: error.toString() }),
+        };
+    }
+};
+
+// Function to handle post deletion
+module.exports.deletePost = async (event) => {
+    console.log("Received event for deletion:", event);
+    const postId = event.pathParameters.postId; // Assuming the postId is passed as a path parameter
+
+    const params = {
+        TableName: POSTS_TABLE,
+        Key: {
+            postId: postId,
+        },
+    };
+
+    try {
+        await dynamoDb.delete(params).promise();
+        console.log("Post deleted successfully with params:", params);
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Post deleted successfully' }),
+        };
+    } catch (error) {
+        console.error("Error deleting post with params:", params, "; Error:", error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Could not delete post', details: error.toString() }),
         };
     }
 };
