@@ -15,7 +15,9 @@ provider:
           Action:
             - "dynamodb:Query"
             - "dynamodb:PutItem"
-          Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.MESSAGES_TABLE}"
+          Resource: 
+            - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.MESSAGES_TABLE}"
+            - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.MESSAGES_TABLE}/index/ConversationIndex"
 
 functions:
   sendMessage:
