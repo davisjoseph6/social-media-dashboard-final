@@ -18,11 +18,11 @@ provider:
         - "dynamodb:UpdateItem"
         - "dynamodb:DeleteItem"
       Resource: 
-        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.ANALYTICS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.ANALYTICS_TABLE}"
 
 functions:
   fetchAnalytics:
-    handler: handlers/fetchAnalytics.handler
+    handler: handler.fetchAnalytics
     events:
       - http:
           path: analytics/{userId}
