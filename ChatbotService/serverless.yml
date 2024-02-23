@@ -9,7 +9,7 @@ provider:
 
 functions:
   chatbotInteraction:
-    handler: handlers/chatbotInteraction.handler
+    handler: handler.chatbotInteraction
     events:
       - http:
           path: chatbot
