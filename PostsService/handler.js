@@ -1,7 +1,11 @@
 // PostsService/handler.js
+
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const { POSTS_TABLE } = process.env;
+
+// Import the AnalyticsService module
+const AnalyticsService = require('/home/davis/Desktop/social-media-dashboard/AnalyticsService/handler.js');
 
 // Function to handle post creation
 module.exports.createPost = async (event) => {
@@ -21,6 +25,10 @@ module.exports.createPost = async (event) => {
     try {
         await dynamoDb.put(params).promise();
         console.log("Post created successfully with params:", params);
+        
+        // Insert analytics data after creating the post
+        await AnalyticsService.insertAnalyticsData(userId, { action: 'post_created', contentLength: content.length });
+        
         return {
             statusCode: 200,
             body: JSON.stringify({ message: 'Post created successfully' }),
