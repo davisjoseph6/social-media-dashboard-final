@@ -5,7 +5,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const { POSTS_TABLE } = process.env;
 
 // Import the AnalyticsService module
-const AnalyticsService = require('/home/davis/Desktop/social-media-dashboard/AnalyticsService/handler.js');
+const AnalyticsService = require('../AnalyticsService/handler.js');
 
 // Function to handle post creation
 module.exports.createPost = async (event) => {

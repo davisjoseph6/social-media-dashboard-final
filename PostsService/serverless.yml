@@ -2,6 +2,9 @@ service: posts-service
 
 frameworkVersion: '3'
 
+plugins:
+  - serverless-package-external
+
 provider:
   name: aws
   runtime: nodejs18.x
@@ -36,12 +39,23 @@ functions:
       - http:
           path: posts
           method: post
+    package:
+      include:
+        - ../AnalyticsService/**   # Include the AnalyticsService directory and its contents
+      exclude:
+        - node_modules/**          # Exclude node_modules directory and its contents
+
   deletePost:
     handler: handler.deletePost
     events:
       - http:
           path: posts/{postId}
           method: delete
+    package:
+      include:
+        - ../AnalyticsService/**   # Include the AnalyticsService directory and its contents
+      exclude:
+        - node_modules/**          # Exclude node_modules directory and its contents
 
 resources:
   Resources:
