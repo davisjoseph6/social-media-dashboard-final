@@ -1,9 +1,6 @@
-service: posts-service
+service: social-media-dashboard  # Update the service name as needed
 
 frameworkVersion: '3'
-
-plugins:
-  - serverless-package-external
 
 provider:
   name: aws
@@ -34,7 +31,10 @@ provider:
         - Effect: "Allow"
           Action:
             - "s3:GetObject"
-          Resource: "arn:aws:s3:::analytics-service-dev-serverlessdeploymentbucket-iky5wevabpyu/AnalyticsService/handler.js"
+          Resource: "arn:aws:s3:::analytics-service-dev-serverlessdeploymentbucket-iky5wevabpyu/*"  # Update with your S3 bucket ARN
+
+plugins:
+  - serverless-package-external
 
 functions:
   createPost:
@@ -45,9 +45,10 @@ functions:
           method: post
     package:
       include:
-        - ../AnalyticsService/handler.js   # Include the AnalyticsService directory and its contents
+        - AnalyticsService/**   # Include the AnalyticsService directory and its contents
+        - handler.js            # Include PostsService handler.js file
       exclude:
-        - node_modules/**          # Exclude node_modules directory and its contents
+        - node_modules/**      # Exclude node_modules directory and its contents
 
   deletePost:
     handler: handler.deletePost
@@ -57,9 +58,10 @@ functions:
           method: delete
     package:
       include:
-        - ../AnalyticsService/handler.js   # Include the AnalyticsService directory and its contents
+        - AnalyticsService/**   # Include the AnalyticsService directory and its contents
+        - handler.js            # Include PostsService handler.js file
       exclude:
-        - node_modules/**          # Exclude node_modules directory and its contents
+        - node_modules/**      # Exclude node_modules directory and its contents
 
 resources:
   Resources:
