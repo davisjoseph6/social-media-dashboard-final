@@ -31,6 +31,10 @@ provider:
             - "dynamodb:PutItem"
             - "dynamodb:DeleteItem"
           Resource: "arn:aws:dynamodb:eu-west-3:637423166046:table/analyticsTable"  # Reference the existing analyticsTable
+        - Effect: "Allow"
+          Action:
+            - "s3:GetObject"
+          Resource: "arn:aws:s3:::analytics-service-dev-serverlessdeploymentbucket-iky5wevabpyu/AnalyticsService/handler.js"
 
 functions:
   createPost:
