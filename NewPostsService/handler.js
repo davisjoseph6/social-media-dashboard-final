@@ -19,6 +19,7 @@ module.exports.createPost = async (event) => {
             userId,
             content,
             createdAt: new Date().toISOString(),
+            likes: 0, // Initialize likes count
         },
     };
 
@@ -45,7 +46,7 @@ module.exports.createPost = async (event) => {
 // Function to handle post deletion
 module.exports.deletePost = async (event) => {
     console.log("Received event for deletion:", event);
-    const postId = event.pathParameters.postId; // Assuming the postId is passed as a path parameter
+    const postId = event.pathParameters.postId;
 
     const params = {
         TableName: POSTS_TABLE,
@@ -66,6 +67,49 @@ module.exports.deletePost = async (event) => {
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'Could not delete post', details: error.toString() }),
+        };
+    }
+};
+
+// Function to handle liking a post
+module.exports.likePost = async (event) => {
+    const postId = event.pathParameters.postId;
+
+    // Attempt to retrieve the current likes for the post
+    const getParams = {
+        TableName: POSTS_TABLE,
+        Key: { postId },
+    };
+
+    try {
+        const result = await dynamoDb.get(getParams).promise();
+        const currentLikes = result.Item.likes || 0;
+
+        // Increment the like count
+        const updateParams = {
+            TableName: POSTS_TABLE,
+            Key: { postId },
+            UpdateExpression: "set likes = :likes",
+            ExpressionAttributeValues: {
+                ":likes": currentLikes + 1,
+            },
+            ReturnValues: "UPDATED_NEW",
+        };
+
+        await dynamoDb.update(updateParams).promise();
+
+        // Optionally, update analytics after liking the post
+        await AnalyticsService.insertAnalyticsData(result.Item.userId, { action: 'post_liked', postId: postId, likes: currentLikes + 1 });
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Post liked successfully' }),
+        };
+    } catch (error) {
+        console.error("Error liking post:", error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Could not like post', details: error.toString() }),
         };
     }
 };

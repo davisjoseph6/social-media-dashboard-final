@@ -18,6 +18,7 @@ provider:
             - "dynamodb:Scan"
             - "dynamodb:GetItem"
             - "dynamodb:PutItem"
+            - "dynamodb:UpdateItem"  # Added to allow updating items, such as likes
             - "dynamodb:DeleteItem"
           Resource: "arn:aws:dynamodb:eu-west-3:637423166046:table/postsTable"
         - Effect: "Allow"
@@ -26,7 +27,6 @@ provider:
             - "dynamodb:Scan"
             - "dynamodb:GetItem"
             - "dynamodb:PutItem"
-            - "dynamodb:DeleteItem"
           Resource: "arn:aws:dynamodb:eu-west-3:637423166046:table/analyticsTable"  # Reference the existing analyticsTable
         - Effect: "Allow"
           Action:
@@ -56,6 +56,19 @@ functions:
       - http:
           path: posts/{postId}
           method: delete
+    package:
+      include:
+        - AnalyticsService/**   # Include the AnalyticsService directory and its contents
+        - handler.js            # Include PostsService handler.js file
+      exclude:
+        - node_modules/**      # Exclude node_modules directory and its contents
+
+  likePost:  # New function to handle post likes
+    handler: handler.likePost
+    events:
+      - http:
+          path: posts/{postId}/like  # Define the path for liking a post
+          method: post  # Using POST method to like a post
     package:
       include:
         - AnalyticsService/**   # Include the AnalyticsService directory and its contents
