@@ -15,11 +15,11 @@ module.exports.createPost = async (event) => {
     const params = {
         TableName: POSTS_TABLE,
         Item: {
-            postId: userId + ":" + Date.now(), // Constructing a unique post ID
+            postId: userId + ":" + Date.now(),
             userId,
             content,
             createdAt: new Date().toISOString(),
-            likes: 0, // Initialize likes count
+            likes: 0,
         },
     };
 
@@ -27,7 +27,6 @@ module.exports.createPost = async (event) => {
         await dynamoDb.put(params).promise();
         console.log("Post created successfully with params:", params);
         
-        // Insert analytics data after creating the post
         await AnalyticsService.insertAnalyticsData(userId, { action: 'post_created', contentLength: content.length });
         
         return {
@@ -75,7 +74,6 @@ module.exports.deletePost = async (event) => {
 module.exports.likePost = async (event) => {
     const postId = event.pathParameters.postId;
 
-    // Attempt to retrieve the current likes for the post
     const getParams = {
         TableName: POSTS_TABLE,
         Key: { postId },
@@ -85,7 +83,6 @@ module.exports.likePost = async (event) => {
         const result = await dynamoDb.get(getParams).promise();
         const currentLikes = result.Item.likes || 0;
 
-        // Increment the like count
         const updateParams = {
             TableName: POSTS_TABLE,
             Key: { postId },
@@ -97,8 +94,7 @@ module.exports.likePost = async (event) => {
         };
 
         await dynamoDb.update(updateParams).promise();
-
-        // Optionally, update analytics after liking the post
+        
         await AnalyticsService.insertAnalyticsData(result.Item.userId, { action: 'post_liked', postId: postId, likes: currentLikes + 1 });
 
         return {
@@ -110,6 +106,27 @@ module.exports.likePost = async (event) => {
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'Could not like post', details: error.toString() }),
+        };
+    }
+};
+
+// New function to handle reading/displaying posts
+module.exports.readPosts = async () => {
+    const params = {
+        TableName: POSTS_TABLE,
+    };
+
+    try {
+        const data = await dynamoDb.scan(params).promise();
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ posts: data.Items }),
+        };
+    } catch (error) {
+        console.error("Error reading posts:", error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Could not read posts', details: error.toString() }),
         };
     }
 };
