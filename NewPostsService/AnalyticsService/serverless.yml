@@ -8,6 +8,7 @@ provider:
   region: eu-west-3
   environment:
     ANALYTICS_TABLE: analyticsTable
+    SUMMARY_TABLE: summaryAnalyticsTable
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -19,6 +20,7 @@ provider:
         - "dynamodb:DeleteItem"
       Resource: 
         - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.ANALYTICS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.SUMMARY_TABLE}"
 
 functions:
   fetchAnalytics:
@@ -27,6 +29,12 @@ functions:
       - http:
           path: analytics/{userId}
           method: get
+  summarizeAnalytics:
+    handler: handler.summarizeAnalytics
+    events:
+      - http:
+          path: summarize-analytics
+          method: post
 
 resources:
   Resources:
@@ -49,6 +57,29 @@ resources:
           - IndexName: DateIndex
             KeySchema:
               - AttributeName: "date"
+                KeyType: "HASH"
+            Projection:
+              ProjectionType: "ALL"
+
+    SummaryAnalyticsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.SUMMARY_TABLE}
+        AttributeDefinitions:
+          - AttributeName: "summaryId"
+            AttributeType: "S"
+          - AttributeName: "summaryDate"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "summaryId"
+            KeyType: "HASH"
+          - AttributeName: "summaryDate"
+            KeyType: "RANGE"
+        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: SummaryDateIndex
+            KeySchema:
+              - AttributeName: "summaryDate"
                 KeyType: "HASH"
             Projection:
               ProjectionType: "ALL"

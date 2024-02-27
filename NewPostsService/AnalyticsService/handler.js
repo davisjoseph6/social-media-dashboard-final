@@ -1,9 +1,10 @@
 // AnalyticsService/handler.js
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const { ANALYTICS_TABLE } = process.env;
+const { ANALYTICS_TABLE, SUMMARY_TABLE } = process.env;
 
 console.log('ANALYTICS_TABLE:', ANALYTICS_TABLE);
+console.log('SUMMARY_TABLE:', SUMMARY_TABLE);
 
 // Fetch analytics data for a given user
 module.exports.fetchAnalytics = async (event) => {
@@ -52,6 +53,31 @@ module.exports.insertAnalyticsData = async (userId, eventData) => {
         console.log("Analytics data inserted successfully with params:", params);
     } catch (error) {
         console.error("Error inserting analytics data with params:", params, "; Error:", error);
+    }
+};
+
+// Summarize and store analytics data
+module.exports.summarizeAnalytics = async () => {
+    // Example summarization logic here
+    const summary = {
+        totalEvents: 100, // Example summary data
+        // Add your summarization logic
+    };
+
+    const params = {
+        TableName: SUMMARY_TABLE,
+        Item: {
+            summaryId: 'global', // Use a fixed ID for a global summary or a unique ID for specific summaries
+            summaryDate: new Date().toISOString(),
+            data: summary,
+        },
+    };
+
+    try {
+        await dynamoDb.put(params).promise();
+        console.log("Summary data inserted successfully with params:", params);
+    } catch (error) {
+        console.error("Error inserting summary data with params:", params, "; Error:", error);
     }
 };
 
