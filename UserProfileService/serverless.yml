@@ -22,6 +22,12 @@ functions:
       - http:
           path: user/profile
           method: post
+  getUserProfile:
+    handler: handler.getUserProfile
+    events:
+      - http:
+          path: user/profile
+          method: get
 
 plugins:
   - serverless-offline
