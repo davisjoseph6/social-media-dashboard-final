@@ -1,7 +1,0 @@
-{
-  "httpMethod": "DELETE",
-  "pathParameters": {
-    "postId": "testuser@example.com:1708310106565"
-  }
-}
-
