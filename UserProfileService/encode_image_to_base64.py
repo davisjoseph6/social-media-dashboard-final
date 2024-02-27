@@ -1,20 +1,27 @@
 import base64
+import json
 
-def encode_image_to_base64(image_path, output_file):
-    """
-    Encodes an image to base64 and writes the encoded string to a file.
-
-    Parameters:
-    - image_path: Path to the image file to encode.
-    - output_file: Path to the output file where the encoded string will be saved.
-    """
+def encode_image_to_base64(image_path):
     with open(image_path, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
-    with open(output_file, "w") as file:
-        file.write(encoded_string)
+    return encoded_string
+
+def create_json_payload(image_path, user_id, name, email):
+    encoded_image = encode_image_to_base64(image_path)
+    payload = {
+        "userId": user_id,
+        "name": name,
+        "email": email,
+        "profilePicture": encoded_image
+    }
+    return json.dumps(payload, indent=4)
 
 # Example usage
-image_path = './test_image/valid_image.jpg'  # Change this to the path of your image file
-output_file = './encoded_image.txt'  # Path to the output file for the encoded string
-encode_image_to_base64(image_path, output_file)
+image_path = './test_image/valid_image.jpg'  # Adjust this path as necessary
+user_id = "testuser@example.com"
+name = "Test User"
+email = "testuser@example.com"
+
+json_payload = create_json_payload(image_path, user_id, name, email)
+print(json_payload)
 
