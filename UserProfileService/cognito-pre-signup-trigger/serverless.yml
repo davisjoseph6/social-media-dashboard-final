@@ -1,0 +1,16 @@
+service: cognito-pre-signup-trigger
+
+provider:
+  name: aws
+  runtime: nodejs18.x # Use the Node.js version that matches your environment
+  region: eu-west-3 # Specify the AWS region
+
+functions:
+  preSignUpTrigger:
+    handler: handler.preSignUpTrigger
+    events:
+      - cognitoUserPool:
+          pool: Login and registration
+          trigger: PreSignUp
+          existing: true
+
