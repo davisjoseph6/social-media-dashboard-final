@@ -1,0 +1,25 @@
+{
+  "version": "1",
+  "region": "eu-west-3",
+  "userPoolId": "eu-west-3_example",
+  "userName": "johndoe",
+  "callerContext": {
+    "awsSdkVersion": "aws-sdk-unknown-unknown",
+    "clientId": "exampleClientId"
+  },
+  "triggerSource": "CustomMessage_SignUp",
+  "request": {
+    "userAttributes": {
+      "sub": "12345678-90ab-cdef-1234-567890abcdef",
+      "email": "johndoe@example.com"
+    },
+    "codeParameter": "123456",
+    "usernameParameter": "johndoe"
+  },
+  "response": {
+    "smsMessage": "Your verification code is {####}.",
+    "emailMessage": "Welcome to the service. Your verification code is {####}.",
+    "emailSubject": "Welcome to Our Awesome Service!"
+  }
+}
+
