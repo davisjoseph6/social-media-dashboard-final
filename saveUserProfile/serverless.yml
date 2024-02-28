@@ -1,0 +1,30 @@
+service: UserProfileLambdaService
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+  environment:
+    USER_PROFILES_TABLE: usersTable
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:GetItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:Scan"
+        - "dynamodb:Query"
+      Resource: "arn:aws:dynamodb:eu-west-3:637423166046:table/usersTable"
+
+functions:
+  saveUserProfile:
+    handler: handler.saveUserProfile
+    events:
+      - cognitoUserPool:
+          pool: Login and registration
+          trigger: PostConfirmation
+          existing: true
+
+plugins:
+  - serverless-offline
+
