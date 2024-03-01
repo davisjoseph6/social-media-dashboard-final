@@ -5,7 +5,14 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: nodejs18.x
-  region: eu-west-3
+  region: eu-west-1 # Ensure this matches your Lambda function and DynamoDB table's region
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "lex:PostText"
+        - "dynamodb:Query" # Added permission for DynamoDB Query action
+        - "dynamodb:GetItem" # Optional, add if your logic requires getting specific items
+      Resource: "*" # For finer control in production, specify actual ARN(s) for Lex and DynamoDB resources
 
 functions:
   chatbotInteraction:
