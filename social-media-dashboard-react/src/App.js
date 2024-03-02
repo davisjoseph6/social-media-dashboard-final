@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './styles/App.css';
 // Importing pages
 import Analytics from './pages/Analytics/Analytics';
@@ -13,17 +13,17 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Switch>
-          {/* Define routes for your pages */}
-          <Route path="/auth" component={Auth} />
-          <Route path="/analytics" component={Analytics} />
-          <Route path="/chatbot" component={Chatbot} />
-          <Route path="/messaging" component={Messaging} />
-          <Route path="/posting" component={Posting} />
-          <Route path="/profile" component={Profile} />
+        <Routes>
+          {/* Update routes for React Router v6 */}
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/chatbot" element={<Chatbot />} />
+          <Route path="/messaging" element={<Messaging />} />
+          <Route path="/posting" element={<Posting />} />
+          <Route path="/profile" element={<Profile />} />
           {/* Redirect to /auth as the default route */}
-          <Route path="/" exact component={Auth} />
-        </Switch>
+          <Route path="/" element={<Auth />} />
+        </Routes>
       </div>
     </Router>
   );
