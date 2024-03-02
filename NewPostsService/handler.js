@@ -32,12 +32,19 @@ module.exports.createPost = async (event) => {
         return {
             statusCode: 200,
             body: JSON.stringify({ message: 'Post created successfully' }),
+            headers: {
+                "Access-Control-Allow-Origin": "*", // Allows requests from any origin
+                "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
+            }
         };
     } catch (error) {
         console.error("Error creating post with params:", params, "; Error:", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'Could not create post', details: error.toString() }),
+            headers: {
+                "Access-Control-Allow-Origin": "*", // Make sure to include CORS headers in error responses as well
+            }
         };
     }
 };
@@ -60,12 +67,18 @@ module.exports.deletePost = async (event) => {
         return {
             statusCode: 200,
             body: JSON.stringify({ message: 'Post deleted successfully' }),
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+            }
         };
     } catch (error) {
         console.error("Error deleting post with params:", params, "; Error:", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'Could not delete post', details: error.toString() }),
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+            }
         };
     }
 };
@@ -100,12 +113,18 @@ module.exports.likePost = async (event) => {
         return {
             statusCode: 200,
             body: JSON.stringify({ message: 'Post liked successfully' }),
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+            }
         };
     } catch (error) {
         console.error("Error liking post:", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'Could not like post', details: error.toString() }),
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+            }
         };
     }
 };
@@ -121,6 +140,11 @@ module.exports.readPosts = async () => {
         return {
             statusCode: 200,
             body: JSON.stringify({ posts: data.Items }),
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+            }
         };
     } catch (error) {
         console.error("Error reading posts:", error);
