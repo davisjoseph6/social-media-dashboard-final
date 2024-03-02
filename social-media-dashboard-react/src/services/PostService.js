@@ -1,7 +1,7 @@
 // Importing Axios for making HTTP requests
 import axios from 'axios';
 
-const API_BASE_URL = 'https://mmiff6t9og.execute-api.eu-west-3.amazonaws.com/dev';
+const API_BASE_URL = 'https://mmiff6t9og.execute-api.eu-west-3.amazonaws.com/dev/posts';
 
 const PostService = {
   // Method to fetch posts
