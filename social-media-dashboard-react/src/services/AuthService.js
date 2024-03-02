@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://your-auth-service-url.com';
+const API_BASE_URL = 'https://93bkfo8yr5.execute-api.eu-west-3.amazonaws.com/dev/users/login';
 
 const AuthService = {
   login: async (email, password) => {

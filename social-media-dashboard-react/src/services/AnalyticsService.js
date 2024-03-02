@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://your-analytics-service-url.com';
+const API_BASE_URL = 'https://h04lj3hflb.execute-api.eu-west-3.amazonaws.com/dev/analytics/{userId}';
 
 const AnalyticsService = {
   fetchUserAnalytics: async (userId) => {

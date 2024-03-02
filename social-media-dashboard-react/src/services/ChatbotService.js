@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://your-chatbot-service-url.com';
+const API_BASE_URL = 'https://cf4uidzza4.execute-api.eu-west-3.amazonaws.com/dev/chatbot';
 
 const ChatbotService = {
   sendMessageToBot: async (message) => {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://your-message-service-url.com';
+const API_BASE_URL = 'https://l6idca5v2j.execute-api.eu-west-3.amazonaws.com/dev/messages/retrieve/{conversationId}';
 
 const MessageService = {
   sendMessage: async (messageData) => {

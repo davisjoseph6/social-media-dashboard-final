@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://your-profile-service-url.com';
+const API_BASE_URL = 'https://jk7i4ijosi.execute-api.eu-west-3.amazonaws.com/dev/user/profile';
 
 const ProfileService = {
   fetchUserProfile: async (userId) => {
