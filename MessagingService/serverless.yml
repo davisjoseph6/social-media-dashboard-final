@@ -18,6 +18,10 @@ provider:
           Resource: 
             - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.MESSAGES_TABLE}"
             - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.MESSAGES_TABLE}/index/ConversationIndex"
+        - Effect: "Allow"
+          Action:
+            - "secretsmanager:GetSecretValue"
+          Resource: "arn:aws:secretsmanager:${self:provider.region}:637423166046:secret:IoT_Instant_messaging-*"
 
 functions:
   sendMessage:
