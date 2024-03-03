@@ -7,7 +7,7 @@ function Auth() {
 
   return (
     <div className="auth">
-      <h1>Welcome to AI-Social-Media</h1>
+      <h1>Welcome to AI-IoT Social-Media</h1>
       <button onClick={() => window.location.href = cognitoUrl}>Sign In / Login</button>
     </div>
   );
