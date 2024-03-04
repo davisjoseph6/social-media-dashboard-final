@@ -29,25 +29,34 @@ async function writeCredentialsToTempFiles(credentials) {
     const certPath = path.join(tempDir, 'certificate.pem');
     const caPath = path.join(tempDir, 'caCertificate.pem');
 
-    fs.writeFileSync(keyPath, credentials.privateKey);
-    fs.writeFileSync(certPath, credentials.certificatePem);
-    fs.writeFileSync(caPath, credentials.caCert);
+    // Corrected to match the actual property names
+    if (credentials.privateKey && credentials.certificate && credentials.caCertificate) {
+        fs.writeFileSync(keyPath, credentials.privateKey);
+        fs.writeFileSync(certPath, credentials.certificate);
+        fs.writeFileSync(caPath, credentials.caCertificate);
+    } else {
+        throw new Error('One or more IoT credential components are undefined.');
+    }
 
     return { keyPath, certPath, caPath };
 }
 
 exports.sendMessage = async (event) => {
-    // Retrieve IoT credentials from Secrets Manager
-    const secretName = "IoT_Instant_messaging"; // The name of your secret in Secrets Manager
-    let iotCredentials;
+    // Parse the incoming event
+    const { senderId, receiverId, content } = JSON.parse(event.body);
+    const timestamp = new Date().getTime();
+    const messageId = `${senderId}:${timestamp}`;
+    const conversationId = [senderId, receiverId].sort().join(':');
+
     try {
+        const secretName = "IoT_Instant_messaging";
         const secretValue = await getSecretValue(secretName);
-        iotCredentials = JSON.parse(secretValue);
-        console.log("IoT Credentials:", iotCredentials); // Log the credentials for debugging
+        const iotCredentials = JSON.parse(secretValue);
+
+        console.log("IoT Credentials:", iotCredentials);
 
         const { keyPath, certPath, caPath } = await writeCredentialsToTempFiles(iotCredentials);
 
-        // Connect to AWS IoT with paths to temporary credential files
         const device = awsIot.device({
             keyPath,
             certPath,
@@ -59,78 +68,42 @@ exports.sendMessage = async (event) => {
         device.on('connect', () => {
             console.log('Connected to AWS IoT');
             const topic = `messaging/${conversationId}`;
-            const messagePayload = JSON.stringify({
-                messageId,
-                conversationId,
-                senderId,
-                receiverId,
-                timestamp,
-                content,
-            });
+            const messagePayload = JSON.stringify({ messageId, conversationId, senderId, receiverId, timestamp, content });
 
-            // Publish message
             device.publish(topic, messagePayload, () => {
-                console.log('Message published to topic', topic);
-                device.end(); // End the connection
+                console.log(`Message published to topic ${topic}`);
+                device.end();
             });
         });
 
-        // Keep interaction with the DynamoDB table
-        const { senderId, receiverId, content } = JSON.parse(event.body);
-        const timestamp = new Date().getTime();
-        const messageId = `${senderId}:${timestamp}`;
-        const conversationId = [senderId, receiverId].sort().join(':');
-
         const params = {
             TableName: MESSAGES_TABLE,
-            Item: {
-                messageId,
-                conversationId,
-                senderId,
-                receiverId,
-                timestamp,
-                content,
-            },
+            Item: { messageId, conversationId, senderId, receiverId, timestamp, content },
         };
 
         await dynamoDb.put(params).promise();
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: 'Message sent successfully' }),
-        };
+        return { statusCode: 200, body: JSON.stringify({ message: 'Message sent successfully' }) };
     } catch (error) {
-        console.error(error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Could not send message' }),
-        };
+        console.error("Error:", error);
+        return { statusCode: 500, body: JSON.stringify({ error: 'Failed to send message' }) };
     }
 };
 
 exports.getMessages = async (event) => {
     const { conversationId } = event.pathParameters;
-
     const params = {
         TableName: MESSAGES_TABLE,
         IndexName: 'ConversationIndex',
         KeyConditionExpression: 'conversationId = :conversationId',
-        ExpressionAttributeValues: {
-            ':conversationId': conversationId,
-        },
+        ExpressionAttributeValues: { ':conversationId': conversationId },
     };
 
     try {
         const data = await dynamoDb.query(params).promise();
-        return {
-            statusCode: 200,
-            body: JSON.stringify(data.Items),
-        };
+        return { statusCode: 200, body: JSON.stringify(data.Items) };
     } catch (error) {
-        console.error(error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Could not retrieve messages' }),
-        };
+        console.error("Error:", error);
+        return { statusCode: 500, body: JSON.stringify({ error: 'Could not retrieve messages' }) };
     }
 };
 
