@@ -7,8 +7,9 @@ function Auth() {
 
   return (
     <div className="auth">
-      <h1>Welcome to AI-IoT Social-Media</h1>
+      <h1>Welcome to AI IoT Social-Media</h1>
       <button onClick={() => window.location.href = cognitoUrl}>Sign In / Login</button>
+      <p>Deployed with Amazon Cloud. By Davis Joseph for Holberton Paris</p> {/* New line added here */}
     </div>
   );
 }
