@@ -18,7 +18,7 @@ provider:
         - "dynamodb:PutItem"
         - "dynamodb:UpdateItem"
         - "dynamodb:DeleteItem"
-      Resource: 
+      Resource:
         - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.ANALYTICS_TABLE}"
         - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.SUMMARY_TABLE}"
 
@@ -29,12 +29,14 @@ functions:
       - http:
           path: analytics/{userId}
           method: get
+          cors: true
   summarizeAnalytics:
     handler: handler.summarizeAnalytics
     events:
       - http:
           path: summarize-analytics
           method: post
+          cors: true
 
 resources:
   Resources:
