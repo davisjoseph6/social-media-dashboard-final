@@ -1,24 +1,23 @@
 import axios from 'axios';
 
-// Corrected base URL (removed the /analytics/{userId} part)
 const API_BASE_URL = 'https://h04lj3hflb.execute-api.eu-west-3.amazonaws.com/dev';
 
 const AnalyticsService = {
-  // Correctly constructs the URL using the provided userId
   fetchUserAnalytics: async (userId) => {
+    // Existing code remains the same
+  },
+
+  // New method for fetching all analytics data
+  fetchAllAnalytics: async () => {
     try {
-      // Constructs the correct URL by inserting the userId into the path
-      const url = `${API_BASE_URL}/analytics/${userId}`;
+      const url = `${API_BASE_URL}/analytics/all`; // Use the new endpoint
       const response = await axios.get(url);
-      // Assuming the response directly contains the data you need; adjust as necessary
-      return response.data;
+      return response.data; // Adjust based on your API's response structure
     } catch (error) {
-      console.error('Fetch analytics error:', error);
+      console.error('Fetch all analytics error:', error);
       throw error;
     }
   },
-
-  // More analytics-related methods can be added here as needed
 };
 
 export default AnalyticsService;

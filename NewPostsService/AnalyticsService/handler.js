@@ -6,33 +6,34 @@ const { ANALYTICS_TABLE, SUMMARY_TABLE } = process.env;
 console.log('ANALYTICS_TABLE:', ANALYTICS_TABLE);
 console.log('SUMMARY_TABLE:', SUMMARY_TABLE);
 
-// Fetch analytics data for a given user
-module.exports.fetchAnalytics = async (event) => {
-    const userId = event.pathParameters.userId;
-    console.log('userId:', userId);
-
+// Fetch all analytics data
+module.exports.fetchAllAnalytics = async () => {
     const params = {
         TableName: ANALYTICS_TABLE,
-        KeyConditionExpression: "userId = :userId",
-        ExpressionAttributeValues: {
-            ":userId": userId,
-        },
     };
 
     try {
-        console.log('DynamoDB query params:', params);
-        const data = await dynamoDb.query(params).promise();
-        console.log('Retrieved data:', data);
+        const data = await dynamoDb.scan(params).promise();
+        console.log('Retrieved all analytics data:', data);
 
         return {
             statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*", // Allows requests from any origin
+                "Access-Control-Allow-Credentials": true, // For credentials support
+                "Access-Control-Allow-Headers": "Content-Type", // Specify allowed headers
+                "Access-Control-Allow-Methods": "OPTIONS,GET", // Allowed request methods
+            },
             body: JSON.stringify(data.Items),
         };
     } catch (error) {
-        console.error('Error fetching analytics:', error);
+        console.error('Error fetching all analytics:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Could not fetch analytics', details: error.toString() }),
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify({ error: 'Could not fetch all analytics', details: error.toString() }),
         };
     }
 };
@@ -58,10 +59,9 @@ module.exports.insertAnalyticsData = async (userId, eventData) => {
 
 // Summarize and store analytics data
 module.exports.summarizeAnalytics = async () => {
-    // Example summarization logic here
+    // Placeholder for summarization logic
     const summary = {
         totalEvents: 100, // Example summary data
-        // Add your summarization logic
     };
 
     const params = {

@@ -30,6 +30,13 @@ functions:
           path: analytics/{userId}
           method: get
           cors: true
+  fetchAllAnalytics:  # New function for fetching all analytics data
+    handler: handler.fetchAllAnalytics  # Assumes you have this handler implemented
+    events:
+      - http:
+          path: analytics/all  # New endpoint for fetching all analytics
+          method: get
+          cors: true
   summarizeAnalytics:
     handler: handler.summarizeAnalytics
     events:
