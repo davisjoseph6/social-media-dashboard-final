@@ -40,7 +40,7 @@ Not using NodeJs or React, but with Apache, PHP, MySQL, and the traditional appr
 
 ------------------------------------------------------------------------------
 
-Facebook Login API, Facebook Graph API, Facebook Social Plugins..
+Facebook Login API, Facebook Graph API, Facebook Social Plugins...
 
 --------------------------------------------------------
 

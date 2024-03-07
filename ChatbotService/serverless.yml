@@ -5,14 +5,15 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: nodejs18.x
-  region: eu-west-2 # Ensure this matches your Lambda function and DynamoDB table's region
+  region: eu-west-2 # Ensure this matches your Lambda function's region
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "lex:PostText"
-        - "lex:RecognizeText" # Ensure Lambda can call Lex's RecognizeText API
+        - "lex:RecognizeText" # Permission for Lex RecognizeText API
         - "dynamodb:Query" # Permission for DynamoDB Query action
-        - "dynamodb:GetItem" # Optional, add if your logic requires getting specific items
+        - "dynamodb:GetItem" # Permission for DynamoDB GetItem action
+        - "dynamodb:Scan" # Added permission for DynamoDB Scan action
       Resource: "*" # For finer control in production, specify actual ARN(s) for Lex and DynamoDB resources
 
 functions:
