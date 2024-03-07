@@ -24,6 +24,13 @@
       "type": "cicd"
     }
   },
+  "interactions": {
+    "Davis": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lex"
+    }
+  },
   "parameters": {
     "AMPLIFY_hosting_amplifyhosting_appId": {
       "usedBy": [
