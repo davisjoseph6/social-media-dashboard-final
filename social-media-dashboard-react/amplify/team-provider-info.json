@@ -17,6 +17,9 @@
           "appId": "d3v06jwbcel14r",
           "type": "cicd"
         }
+      },
+      "auth": {
+        "socialmediadashboard": {}
       }
     }
   }
