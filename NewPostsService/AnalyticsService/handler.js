@@ -1,6 +1,7 @@
 // AnalyticsService/handler.js
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const quickSight = new AWS.QuickSight({ apiVersion: '2018-04-01' });
 const { ANALYTICS_TABLE, SUMMARY_TABLE } = process.env;
 
 console.log('ANALYTICS_TABLE:', ANALYTICS_TABLE);
@@ -59,7 +60,6 @@ module.exports.insertAnalyticsData = async (userId, eventData) => {
 
 // Summarize and store analytics data
 module.exports.summarizeAnalytics = async () => {
-    // Placeholder for summarization logic
     const summary = {
         totalEvents: 100, // Example summary data
     };
@@ -67,7 +67,7 @@ module.exports.summarizeAnalytics = async () => {
     const params = {
         TableName: SUMMARY_TABLE,
         Item: {
-            summaryId: 'global', // Use a fixed ID for a global summary or a unique ID for specific summaries
+            summaryId: 'global',
             summaryDate: new Date().toISOString(),
             data: summary,
         },
@@ -78,6 +78,41 @@ module.exports.summarizeAnalytics = async () => {
         console.log("Summary data inserted successfully with params:", params);
     } catch (error) {
         console.error("Error inserting summary data with params:", params, "; Error:", error);
+    }
+};
+
+// Fetch QuickSight embed URL
+module.exports.fetchQuickSightEmbedUrl = async () => {
+    const params = {
+        AwsAccountId: "637423166046",
+        DashboardId: "fce31f6e-78d3-441b-bf74-f290fd3901af",
+        IdentityType: "IAM",
+        SessionLifetimeInMinutes: 100,
+        UndoRedoDisabled: false,
+        ResetDisabled: false,
+        UserArn: "arn:aws:quicksight:eu-west-3:637423166046:user/default/davis", // Replace <username> with your actual QuickSight username
+    };
+
+    try {
+        const data = await quickSight.getDashboardEmbedUrl(params).promise();
+        console.log('QuickSight Embed URL:', data.EmbedUrl);
+
+        return {
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*", // Update as per your CORS policy
+            },
+            body: JSON.stringify({ embedUrl: data.EmbedUrl }),
+        };
+    } catch (error) {
+        console.error('Error fetching QuickSight embed URL:', error);
+        return {
+            statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*", // Update as per your CORS policy
+            },
+            body: JSON.stringify({ error: 'Could not fetch QuickSight embed URL', details: error.toString() }),
+        };
     }
 };
 

@@ -21,6 +21,10 @@ provider:
       Resource:
         - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.ANALYTICS_TABLE}"
         - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.SUMMARY_TABLE}"
+    - Effect: "Allow"
+      Action:
+        - "quicksight:GetDashboardEmbedUrl"
+      Resource: "*" # Adjust this based on your QuickSight dashboard ARN if you want to restrict access
 
 functions:
   fetchAnalytics:
@@ -30,11 +34,11 @@ functions:
           path: analytics/{userId}
           method: get
           cors: true
-  fetchAllAnalytics:  # New function for fetching all analytics data
-    handler: handler.fetchAllAnalytics  # Assumes you have this handler implemented
+  fetchAllAnalytics:
+    handler: handler.fetchAllAnalytics
     events:
       - http:
-          path: analytics/all  # New endpoint for fetching all analytics
+          path: analytics/all
           method: get
           cors: true
   summarizeAnalytics:
@@ -43,6 +47,13 @@ functions:
       - http:
           path: summarize-analytics
           method: post
+          cors: true
+  fetchQuickSightEmbedUrl: # New function for fetching QuickSight embed URL
+    handler: handler.fetchQuickSightEmbedUrl
+    events:
+      - http:
+          path: quicksight-embed-url
+          method: get
           cors: true
 
 resources:
@@ -69,7 +80,6 @@ resources:
                 KeyType: "HASH"
             Projection:
               ProjectionType: "ALL"
-
     SummaryAnalyticsTable:
       Type: AWS::DynamoDB::Table
       Properties:
