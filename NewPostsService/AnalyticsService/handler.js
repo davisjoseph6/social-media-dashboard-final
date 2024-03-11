@@ -90,7 +90,7 @@ module.exports.fetchQuickSightEmbedUrl = async () => {
         SessionLifetimeInMinutes: 100,
         UndoRedoDisabled: false,
         ResetDisabled: false,
-        UserArn: "arn:aws:quicksight:eu-west-3:637423166046:user/default/davis", // Replace <username> with your actual QuickSight username
+        UserArn: "arn:aws:quicksight:eu-west-3:637423166046:user/default/davis", 
     };
 
     try {
