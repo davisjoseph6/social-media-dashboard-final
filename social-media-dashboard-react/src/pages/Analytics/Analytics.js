@@ -4,7 +4,8 @@ import './analytics.css';
 
 function Analytics() {
   const [analytics, setAnalytics] = useState([]);
-  const [embedUrl, setEmbedUrl] = useState('');
+  // Directly use your QuickSight embed URL here
+  const [embedUrl, setEmbedUrl] = useState('https://eu-west-3.quicksight.aws.amazon.com/sn/embed/share/accounts/637423166046/dashboards/fce31f6e-78d3-441b-bf74-f290fd3901af?directory_alias=davis');
 
   useEffect(() => {
     // Fetch analytics data
@@ -17,18 +18,7 @@ function Analytics() {
       }
     }
 
-    // Fetch QuickSight dashboard embed URL
-    async function fetchQuickSightEmbedUrl() {
-      try {
-        const url = await AnalyticsService.fetchQuickSightEmbedUrl();
-        setEmbedUrl(url);
-      } catch (error) {
-        console.error('Error fetching QuickSight embed URL:', error);
-      }
-    }
-
     fetchAnalyticsData();
-    fetchQuickSightEmbedUrl();
   }, []); // Dependency array is empty, these will run once on component mount
 
   return (
