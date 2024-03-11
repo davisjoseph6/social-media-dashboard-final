@@ -27,7 +27,19 @@ const PostService = {
     }
   },
 
-  // Add more methods for updating or deleting posts as needed
+  // Method to like a post
+  likePost: async (postId) => {
+    try {
+      // Adjust the URL to match your API endpoint for liking a post
+      const response = await axios.post(`${API_BASE_URL}/posts/${postId}/like`);
+      return response.data;
+    } catch (error) {
+      console.error('Error liking post:', error);
+      throw error;
+    }
+  },
+
+  // Optionally, add more methods for updating or deleting posts as needed
 };
 
 export default PostService;

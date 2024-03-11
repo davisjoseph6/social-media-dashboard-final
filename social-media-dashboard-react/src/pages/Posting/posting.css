@@ -1,5 +1,31 @@
 .posting {
   padding: 20px;
-  /* Additional styles */
+}
+
+.post {
+  border: 1px solid #ccc;
+  margin: 20px 0;
+  padding: 10px;
+  display: flex;
+  align-items: start;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.post-content h3 {
+  margin: 0 0 10px 0;
+}
+
+.post-content p {
+  margin: 0 0 10px 0;
+}
+
+.post-actions {
+  margin-top: 10px;
 }
 
