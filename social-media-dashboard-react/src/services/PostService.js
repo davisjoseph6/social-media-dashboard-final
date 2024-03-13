@@ -8,7 +8,7 @@ const PostService = {
   fetchPosts: async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/posts`);
-      // Adjusted to extract the 'posts' array from the response
+      // Extract the 'posts' array from the response
       return response.data.posts; // Ensure this matches your actual API response structure
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -30,7 +30,6 @@ const PostService = {
   // Method to like a post
   likePost: async (postId) => {
     try {
-      // Adjust the URL to match your API endpoint for liking a post
       const response = await axios.post(`${API_BASE_URL}/posts/${postId}/like`);
       return response.data;
     } catch (error) {
@@ -39,7 +38,18 @@ const PostService = {
     }
   },
 
-  // Optionally, add more methods for updating or deleting posts as needed
+  // Method to delete a post
+  deletePost: async (postId) => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/posts/${postId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      throw error;
+    }
+  },
+
+  // Optionally, add more methods for updating posts as needed
 };
 
 export default PostService;
