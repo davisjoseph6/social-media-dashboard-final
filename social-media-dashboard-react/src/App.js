@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './styles/App.css';
+import NavBar from './components/NavBar'; // Ensure this import path is correct
+
 // Importing pages
 import Analytics from './pages/Analytics/Analytics';
 import Auth from './pages/Auth/Auth';
@@ -13,16 +15,15 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <NavBar /> {/* This will make NavBar visible on all pages */}
         <Routes>
-          {/* Update routes for React Router v6 */}
           <Route path="/auth" element={<Auth />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/chatbot" element={<Chatbot />} />
           <Route path="/messaging" element={<Messaging />} />
           <Route path="/posting" element={<Posting />} />
           <Route path="/profile" element={<Profile />} />
-          {/* Redirect to /auth as the default route */}
-          <Route path="/" element={<Auth />} />
+          <Route path="/" element={<Auth />} /> {/* Consider having a Home or Landing page as the default route */}
         </Routes>
       </div>
     </Router>
