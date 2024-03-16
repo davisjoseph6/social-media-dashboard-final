@@ -13,21 +13,21 @@ async function getCognitoCredentials() {
 
     // Manually refresh the credentials
     await AWS.config.credentials.getPromise();
-    
+
     console.log("Cognito Credentials:", AWS.config.credentials);
-    
+
     const params = {
-      IdentityId: AWS.config.credentials.identityId,
-      Logins: {
-        // Your login provider here, e.g., 'accounts.google.com': 'TOKEN'
-      }
+        IdentityId: AWS.config.credentials.identityId,
+        Logins: {
+            // Your login provider here, e.g., 'accounts.google.com': 'TOKEN'
+        }
     };
-    
+
     const data = await cognitoIdentity.getCredentialsForIdentity(params).promise();
     AWS.config.update({
-      accessKeyId: data.Credentials.AccessKeyId,
-      secretAccessKey: data.Credentials.SecretKey,
-      sessionToken: data.Credentials.SessionToken,
+        accessKeyId: data.Credentials.AccessKeyId,
+        secretAccessKey: data.Credentials.SecretKey,
+        sessionToken: data.Credentials.SessionToken,
     });
 
     return AWS.config.credentials;
@@ -49,10 +49,16 @@ async function publishMessageToIotTopic(credentials, topic, message) {
 }
 
 exports.sendMessage = async (event) => {
-    const { senderId, receiverId, content } = JSON.parse(event.body);
+    const requestBody = JSON.parse(event.body);
+    const { conversationId, senderId, receiverId, content } = requestBody;
+
+    if (!conversationId || !senderId || !receiverId || !content) {
+        console.error("Missing required fields in request body");
+        return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
+    }
+
     const timestamp = new Date().getTime();
     const messageId = `${senderId}:${timestamp}`;
-    const conversationId = [senderId, receiverId].sort().join(':');
     const topic = `messaging/${conversationId}`;
     const messagePayload = { messageId, conversationId, senderId, receiverId, timestamp, content };
 
