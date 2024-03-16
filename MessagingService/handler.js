@@ -1,21 +1,51 @@
 // MessagingService/handler.js
 const AWS = require('aws-sdk');
-const awsIot = require('aws-iot-device-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const { MESSAGES_TABLE, COGNITO_IDENTITY_POOL_ID } = process.env;
 AWS.config.update({ region: 'eu-west-3' });
 
-// Note: The function getSecretValue and writeCredentialsToTempFiles are no longer needed with the Cognito approach.
-
+// Function to retrieve and refresh Cognito credentials
 async function getCognitoCredentials() {
-    // Configure Cognito to use the Identity Pool
+    const cognitoIdentity = new AWS.CognitoIdentity();
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
         IdentityPoolId: COGNITO_IDENTITY_POOL_ID,
     });
 
-    // Get AWS credentials
+    // Manually refresh the credentials
     await AWS.config.credentials.getPromise();
+    
+    console.log("Cognito Credentials:", AWS.config.credentials);
+    
+    const params = {
+      IdentityId: AWS.config.credentials.identityId,
+      Logins: {
+        // Your login provider here, e.g., 'accounts.google.com': 'TOKEN'
+      }
+    };
+    
+    const data = await cognitoIdentity.getCredentialsForIdentity(params).promise();
+    AWS.config.update({
+      accessKeyId: data.Credentials.AccessKeyId,
+      secretAccessKey: data.Credentials.SecretKey,
+      sessionToken: data.Credentials.SessionToken,
+    });
+
     return AWS.config.credentials;
+}
+
+// Example function to demonstrate how to use AWS SDK for direct IoT interactions
+async function publishMessageToIotTopic(credentials, topic, message) {
+    const iot = new AWS.Iot();
+    const endpoint = await iot.describeEndpoint({ endpointType: "iot:Data-ATS" }).promise();
+
+    const iotData = new AWS.IotData({ endpoint: endpoint.endpointAddress });
+    const params = {
+        topic,
+        payload: JSON.stringify(message),
+        qos: 0
+    };
+
+    return iotData.publish(params).promise();
 }
 
 exports.sendMessage = async (event) => {
@@ -23,39 +53,22 @@ exports.sendMessage = async (event) => {
     const timestamp = new Date().getTime();
     const messageId = `${senderId}:${timestamp}`;
     const conversationId = [senderId, receiverId].sort().join(':');
+    const topic = `messaging/${conversationId}`;
+    const messagePayload = { messageId, conversationId, senderId, receiverId, timestamp, content };
 
     try {
-        // Use Cognito to obtain temporary credentials
         const credentials = await getCognitoCredentials();
-
-        // Initialize AWS IoT Device with Cognito temporary credentials
-        const device = awsIot.device({
-            accessKeyId: credentials.accessKeyId,
-            secretKey: credentials.secretAccessKey,
-            sessionToken: credentials.sessionToken,
-            clientId: `sendMessageLambda-${Math.floor(Math.random() * 100000)}`,
-            host: 'a1wqb40c1562d3-ats.iot.eu-west-3.amazonaws.com'
-        });
-
-        device.on('connect', () => {
-            console.log('Connected to AWS IoT');
-            const topic = `messaging/${conversationId}`;
-            const messagePayload = JSON.stringify({ messageId, conversationId, senderId, receiverId, timestamp, content });
-
-            device.publish(topic, messagePayload, () => {
-                console.log(`Message published to topic ${topic}`);
-                device.end(); // Disconnect from AWS IoT
-            });
-        });
+        await publishMessageToIotTopic(credentials, topic, messagePayload);
+        console.log(`Message published to topic ${topic}`);
 
         const params = {
             TableName: MESSAGES_TABLE,
-            Item: { messageId, conversationId, senderId, receiverId, timestamp, content },
+            Item: messagePayload,
         };
         await dynamoDb.put(params).promise();
         return { statusCode: 200, body: JSON.stringify({ message: 'Message sent successfully' }) };
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error in sendMessage:", error);
         return { statusCode: 500, body: JSON.stringify({ error: 'Failed to send message' }) };
     }
 };
@@ -73,7 +86,7 @@ exports.getMessages = async (event) => {
         const data = await dynamoDb.query(params).promise();
         return { statusCode: 200, body: JSON.stringify(data.Items) };
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error in getMessages:", error);
         return { statusCode: 500, body: JSON.stringify({ error: 'Could not retrieve messages' }) };
     }
 };
