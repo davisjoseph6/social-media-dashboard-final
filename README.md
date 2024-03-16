@@ -31,7 +31,7 @@ It has:
 - reading others' postsfrom Facebook and Twitter/Instagram, 
 - messenger feature, 
 - Analytics feature.  
-- an AI chatbot feature...
+- an AI chatbot feature..
 - Use Amazon Lamda service
 Description and setup instructions for the project.
 
