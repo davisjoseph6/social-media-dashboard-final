@@ -8,6 +8,7 @@ provider:
   region: eu-west-3
   environment:
     MESSAGES_TABLE: messagesTable
+    COGNITO_IDENTITY_POOL_ID: "eu-west-3:13ba40ea-518f-4e37-b188-3e17e1d73785" # Add your Cognito Identity Pool ID here
   iam:
     role:
       statements:
@@ -29,6 +30,11 @@ provider:
             - "iot:Subscribe"
             - "iot:Receive"
           Resource: "*"
+        - Effect: "Allow" # Permissions for Cognito Identity Pool
+          Action:
+            - "cognito-identity:GetId"
+            - "cognito-identity:GetCredentialsForIdentity"
+          Resource: "*" # It's a good practice to restrict this to the specific resource
 
 functions:
   sendMessage:

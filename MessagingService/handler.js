@@ -2,65 +2,37 @@
 const AWS = require('aws-sdk');
 const awsIot = require('aws-iot-device-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const { MESSAGES_TABLE } = process.env;
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
-AWS.config.update({ region: 'eu-west-3' }); // Update this to your region
-const secretsManager = new AWS.SecretsManager();
+const { MESSAGES_TABLE, COGNITO_IDENTITY_POOL_ID } = process.env;
+AWS.config.update({ region: 'eu-west-3' });
 
-async function getSecretValue(secretName) {
-    return new Promise((resolve, reject) => {
-        secretsManager.getSecretValue({ SecretId: secretName }, (err, data) => {
-            if (err) {
-                console.error(err);
-                reject(err);
-            } else {
-                resolve(data.SecretString);
-            }
-        });
+// Note: The function getSecretValue and writeCredentialsToTempFiles are no longer needed with the Cognito approach.
+
+async function getCognitoCredentials() {
+    // Configure Cognito to use the Identity Pool
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: COGNITO_IDENTITY_POOL_ID,
     });
-}
 
-// Function to write credentials to temporary files and return paths
-async function writeCredentialsToTempFiles(credentials) {
-    const tempDir = os.tmpdir();
-    const keyPath = path.join(tempDir, 'privateKey.pem');
-    const certPath = path.join(tempDir, 'certificate.pem');
-    const caPath = path.join(tempDir, 'caCertificate.pem');
-
-    // Corrected to match the actual property names
-    if (credentials.privateKey && credentials.certificate && credentials.caCertificate) {
-        fs.writeFileSync(keyPath, credentials.privateKey);
-        fs.writeFileSync(certPath, credentials.certificate);
-        fs.writeFileSync(caPath, credentials.caCertificate);
-    } else {
-        throw new Error('One or more IoT credential components are undefined.');
-    }
-
-    return { keyPath, certPath, caPath };
+    // Get AWS credentials
+    await AWS.config.credentials.getPromise();
+    return AWS.config.credentials;
 }
 
 exports.sendMessage = async (event) => {
-    // Parse the incoming event
     const { senderId, receiverId, content } = JSON.parse(event.body);
     const timestamp = new Date().getTime();
     const messageId = `${senderId}:${timestamp}`;
     const conversationId = [senderId, receiverId].sort().join(':');
 
     try {
-        const secretName = "IoT_Instant_messaging";
-        const secretValue = await getSecretValue(secretName);
-        const iotCredentials = JSON.parse(secretValue);
+        // Use Cognito to obtain temporary credentials
+        const credentials = await getCognitoCredentials();
 
-        console.log("IoT Credentials:", iotCredentials);
-
-        const { keyPath, certPath, caPath } = await writeCredentialsToTempFiles(iotCredentials);
-
+        // Initialize AWS IoT Device with Cognito temporary credentials
         const device = awsIot.device({
-            keyPath,
-            certPath,
-            caPath,
+            accessKeyId: credentials.accessKeyId,
+            secretKey: credentials.secretAccessKey,
+            sessionToken: credentials.sessionToken,
             clientId: `sendMessageLambda-${Math.floor(Math.random() * 100000)}`,
             host: 'a1wqb40c1562d3-ats.iot.eu-west-3.amazonaws.com'
         });
@@ -72,7 +44,7 @@ exports.sendMessage = async (event) => {
 
             device.publish(topic, messagePayload, () => {
                 console.log(`Message published to topic ${topic}`);
-                device.end();
+                device.end(); // Disconnect from AWS IoT
             });
         });
 
@@ -80,7 +52,6 @@ exports.sendMessage = async (event) => {
             TableName: MESSAGES_TABLE,
             Item: { messageId, conversationId, senderId, receiverId, timestamp, content },
         };
-
         await dynamoDb.put(params).promise();
         return { statusCode: 200, body: JSON.stringify({ message: 'Message sent successfully' }) };
     } catch (error) {
