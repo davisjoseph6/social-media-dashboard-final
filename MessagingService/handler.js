@@ -18,9 +18,7 @@ async function getCognitoCredentials() {
 
     const params = {
         IdentityId: AWS.config.credentials.identityId,
-        Logins: {
-            // Your login provider here, e.g., 'accounts.google.com': 'TOKEN'
-        }
+        Logins: {} // Update with actual logins if necessary
     };
 
     const data = await cognitoIdentity.getCredentialsForIdentity(params).promise();
@@ -54,7 +52,14 @@ exports.sendMessage = async (event) => {
 
     if (!conversationId || !senderId || !receiverId || !content) {
         console.error("Missing required fields in request body");
-        return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
+        return {
+            statusCode: 400,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": "true"
+            },
+            body: JSON.stringify({ error: 'Missing required fields' })
+        };
     }
 
     const timestamp = new Date().getTime();
@@ -72,10 +77,24 @@ exports.sendMessage = async (event) => {
             Item: messagePayload,
         };
         await dynamoDb.put(params).promise();
-        return { statusCode: 200, body: JSON.stringify({ message: 'Message sent successfully' }) };
+        return {
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": "true"
+            },
+            body: JSON.stringify({ message: 'Message sent successfully' })
+        };
     } catch (error) {
         console.error("Error in sendMessage:", error);
-        return { statusCode: 500, body: JSON.stringify({ error: 'Failed to send message' }) };
+        return {
+            statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": "true"
+            },
+            body: JSON.stringify({ error: 'Failed to send message' })
+        };
     }
 };
 
@@ -90,10 +109,24 @@ exports.getMessages = async (event) => {
 
     try {
         const data = await dynamoDb.query(params).promise();
-        return { statusCode: 200, body: JSON.stringify(data.Items) };
+        return {
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": "true"
+            },
+            body: JSON.stringify(data.Items)
+        };
     } catch (error) {
         console.error("Error in getMessages:", error);
-        return { statusCode: 500, body: JSON.stringify({ error: 'Could not retrieve messages' }) };
+        return {
+            statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": "true"
+            },
+            body: JSON.stringify({ error: 'Could not retrieve messages' })
+        };
     }
 };
 
