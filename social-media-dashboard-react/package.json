@@ -2,6 +2,7 @@
   "name": "social-media-dashboard-react",
   "version": "0.1.0",
   "private": true,
+  "proxy": "https://l6idca5v2j.execute-api.eu-west-3.amazonaws.com",
   "dependencies": {
     "@aws-amplify/ui-react": "^6.1.5",
     "@testing-library/jest-dom": "^5.17.0",
@@ -45,3 +46,4 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }
+

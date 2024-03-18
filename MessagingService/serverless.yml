@@ -8,7 +8,7 @@ provider:
   region: eu-west-3
   environment:
     MESSAGES_TABLE: messagesTable
-    COGNITO_IDENTITY_POOL_ID: "eu-west-3:13ba40ea-518f-4e37-b188-3e17e1d73785" # Add your Cognito Identity Pool ID here
+    COGNITO_IDENTITY_POOL_ID: "eu-west-3:13ba40ea-518f-4e37-b188-3e17e1d73785"
   iam:
     role:
       statements:
@@ -30,11 +30,11 @@ provider:
             - "iot:Subscribe"
             - "iot:Receive"
           Resource: "*"
-        - Effect: "Allow" # Permissions for Cognito Identity Pool
+        - Effect: "Allow"
           Action:
             - "cognito-identity:GetId"
             - "cognito-identity:GetCredentialsForIdentity"
-          Resource: "*" # It's a good practice to restrict this to the specific resource
+          Resource: "*"
 
 functions:
   sendMessage:
@@ -43,12 +43,14 @@ functions:
       - http:
           path: messages/send
           method: post
+          cors: true # Enables CORS with default settings
   getMessages:
     handler: handler.getMessages
     events:
       - http:
           path: messages/retrieve/{conversationId}
           method: get
+          cors: true # Enables CORS with default settings
 
 resources:
   Resources:
