@@ -22,7 +22,7 @@ How to use the application.
 Contribution guidelines.
 
 ## License
-License information.
+License information..
 
 # Social Media Dashboard.
 It has: 
