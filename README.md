@@ -1,73 +1,125 @@
-# Social Media Dashboard
+# social-media-dashboard tool
+## with messenger and AI chatbot
+## with analytics, posts page and home feed.
 
-![Social Media Dashboard](screenshot.png)
+- Authentication - registration and login. (If time allows using Facebook's Auth service).
+- Analytics of facebook posts.
+- home page with feed from facebook (and maybe Instagram)
+- make posts to facebook
+- messaging within the app
+- AI chatbot.
 
-Welcome to the **Social Media Dashboard** repository. This project is a fully integrated social media platform that combines user profile management, real-time messaging, post creation and interaction, analytics, chatbot functionality, and more, all deployed using AWS services.
+# Social Media Dashboard Application.
+This project is a social media dashboard with messenger and AI chatbot features.
 
-## About the Developer
+## Installation..
+Detailed steps to install and run the project.
 
-Hello! I'm [Davis Joseph](https://www.linkedin.com/in/davisjoseph767/), a dedicated software engineer and cloud enthusiast with a passion for creating innovative solutions. Connect with me on [Twitter](https://x.com/davisjoseph76) for updates on my latest projects and follow my [Portfolio Project repository](https://github.com/yourportfolio) for more of my work.
+## Usage - to test if it works.
+How to use the application.
 
-## Project Description
+## Contributing
+Contribution guidelines.
 
-The **Social Media Dashboard** is designed to provide a comprehensive social media experience with functionalities similar to popular platforms. The project leverages AWS for serverless deployment, ensuring scalability, reliability, and cost-effectiveness.
+## License
+License information..
 
-### Story of Development
+# Social Media Dashboard.
+It has: 
+- a login feature, 
+- a post feature to post text and images to Facebook and Twitter/Instagram, 
+- reading others' postsfrom Facebook and Twitter/Instagram, 
+- messenger feature, 
+- Analytics feature.  
+- an AI chatbot feature.
+- Use Amazon Lamda service
+Description and setup instructions for the project.
 
-The development journey of the Social Media Dashboard began with a simple idea: to integrate various social media functionalities into a single cohesive platform. Starting from user authentication and profile management, the project expanded to include real-time messaging, post creation, and analytics. The integration of AWS services like DynamoDB, Cognito, Lambda, and QuickSight allowed for seamless scalability and performance optimization. This project is a testament to the power of cloud services in modern application development.
+Not using NodeJs or React, but with Apache, PHP, MySQL, and the traditional approach.
 
-### Implemented Features
 
-- **User Profile Management**: Create and update user profiles with secure storage using AWS DynamoDB.
-- **Real-Time Messaging**: Send and receive messages in real-time using AWS IoT and DynamoDB.
-- **Post Creation and Interaction**: Create, like, and delete posts with real-time updates and interaction tracking.
-- **Analytics Dashboard**: View user and system analytics using embedded Amazon QuickSight dashboards.
-- **Chatbot Integration**: Interact with an AI-powered chatbot using Amazon Lex for enhanced user experience.
-- **Serverless Architecture**: Deployed using AWS Lambda, API Gateway, and other serverless technologies for high availability and scalability.
+------------------------------------------------------------------------------
 
-### Features to be Implemented
+Facebook Login API, Facebook Graph API, Facebook Social Plugins.
 
-- **Advanced Analytics**: More detailed user behavior analysis and system performance metrics.
-- **Enhanced Chatbot**: Additional conversational capabilities and improved response accuracy.
-- **Notification System**: Real-time notifications for user interactions and system alerts.
-- **Mobile Application**: Development of a companion mobile app for better accessibility.
+--------------------------------------------------------
 
-### Challenges Faced
+Site URL: https://vc5xlq3iwg.execute-api.eu-west-3.amazonaws.com/dev/users/login
 
-One of the most significant challenges was managing the integration of multiple AWS services and ensuring seamless communication between them. Debugging serverless applications, especially those involving multiple asynchronous processes, required careful monitoring and logging. Optimizing the performance of DynamoDB queries and managing the security configurations for various AWS services were also challenging but ultimately rewarding tasks.
+---------------------
 
-## Repository Structure
+JavaScript code:
 
-The repository is organized into several services, each responsible for different functionalities of the platform:
+The Facebook SDK for JavaScript doesn't have any standalone files that need to be downloaded or installed, instead you simply need to include a short piece of regular JavaScript in your HTML that will asynchronously load the SDK into your pages. The async load means that it does not block loading other elements of your page.
 
-- **UserProfileService**
-  - Handles user profile creation and management.
-  - Uses AWS DynamoDB for data storage.
-  - Contains serverless configurations for deployment.
 
-- **ChatbotService**
-  - Integrates with Amazon Lex for chatbot interactions.
-  - Provides a conversational interface for users.
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '{your-app-id}',
+      cookie     : true,
+      xfbml      : true,
+      version    : '{api-version}'
+    });
+      
+    FB.AppEvents.logPageView();   
+      
+  };
 
-- **MessagingService**
-  - Manages real-time messaging between users.
-  - Utilizes AWS IoT and DynamoDB for message storage and retrieval.
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
 
-- **NewPostsService**
-  - Allows users to create, like, and delete posts.
-  - Tracks user interactions and posts analytics.
+Site URL: https://vc5xlq3iwg.execute-api.eu-west-3.amazonaws.com/dev/users/login
 
-- **AnalyticsService**
-  - Provides analytics data and visualization using Amazon QuickSight.
-  - Summarizes and stores analytics data in DynamoDB.
+-----------------------------------------------
 
-- **Social Media Dashboard React Application**
-  - Frontend application built with React.
-  - Integrates with backend services for user authentication, posting, messaging, and analytics.
+3. Check Login Status
+The first step when loading your web page is figuring out if a person is already logged into your app with Facebook login. You start that process with a call to FB.getLoginStatus. That function will trigger a call to Facebook to get the login status and call your callback function with the results.
+Taken from the sample code above, here's some of the code that's run during page load to check a person's login status:
 
-Each service folder contains the respective code, configuration files, and resources necessary for deployment and operation.
+FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+});
 
----
+Copy Code
+The response object that's provided to your callback contains a number of fields:
 
-Thank you for exploring the **Social Media Dashboard** repository. Contributions, suggestions, and feedback are highly appreciated. Let's build something amazing together!
 
+{
+    status: 'connected',
+    authResponse: {
+        accessToken: '...',
+        expiresIn:'...',
+        signedRequest:'...',
+        userID:'...'
+    }
+}
+
+
+Copy Code
+status specifies the login status of the person using the app. The status can be one of the following:
+connected - the person is logged into Facebook, and has logged into your app.
+not_authorized - the person is logged into Facebook, but has not logged into your app.
+unknown - the person is not logged into Facebook, so you don't know if they've logged into your app or FB.logout() was called before and therefore, it cannot connect to Facebook.
+authResponse is included if the status is connected and is made up of the following:
+accessToken - contains an access token for the person using the app.
+expiresIn - indicates the UNIX time when the token expires and needs to be renewed.
+signedRequest - a signed parameter that contains information about the person using the app.
+userID - the ID of the person using the app.
+Once your app knows the login status of the person using it, it can do one of the following:
+If the person is logged into Facebook and your app, redirect them to your app's logged in experience.
+If the person isn't logged into your app, or isn't logged into Facebook, prompt them with the Login dialog with FB.login() or show them the Login Button.
+
+
+
+
+
+
+
+Development logs: Postman..

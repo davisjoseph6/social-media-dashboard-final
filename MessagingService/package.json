@@ -1,0 +1,16 @@
+{
+  "name": "messagingservice",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-iot-device-sdk": "^2.2.13",
+    "aws-sdk": "^2.1560.0"
+  },
+  "description": ""
+}

@@ -1,0 +1,46 @@
+service: auth-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+  environment:
+    USERS_TABLE: usersTable
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:*"
+          Resource: "*"
+
+functions:
+  userRegistration:
+    handler: handler.userRegistration
+    events:
+      - http:
+          path: users/register
+          method: post
+  userLogin:
+    handler: handler.userLogin
+    events:
+      - http:
+          path: users/login
+          method: post
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.USERS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+

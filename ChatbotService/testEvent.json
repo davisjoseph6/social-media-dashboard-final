@@ -1,0 +1,23 @@
+{
+  "sessionId": "WebUser",
+  "inputTranscript": "I want to view my Analytics data",
+  "interpretations": [
+    {
+      "intent": {
+        "name": "CheckAnalytics",
+        "slots": {}
+      }
+    }
+  ],
+  "sessionState": {
+    "sessionAttributes": {
+      "userId": "testuser4@example.com"
+    }
+  },
+  "bot": {
+    "id": "NV2GPBSZDM",
+    "aliasId": "TSTALIASID",
+    "localeId": "en_US"
+  }
+}
+

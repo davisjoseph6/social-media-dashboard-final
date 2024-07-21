@@ -1,0 +1,34 @@
+# serverless.yml
+service: user-profile-service
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3  # Specify your AWS region
+  environment:
+    USER_PROFILES_TABLE: usersTable  # Assuming 'usersTable' is your DynamoDB table for user profiles
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:GetItem"
+        - "dynamodb:UpdateItem"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_PROFILES_TABLE}"
+
+functions:
+  updateUserProfile:
+    handler: handler.updateUserProfile
+    events:
+      - http:
+          path: user/profile
+          method: post
+  getUserProfile:
+    handler: handler.getUserProfile
+    events:
+      - http:
+          path: user/profile
+          method: get
+
+plugins:
+  - serverless-offline
+

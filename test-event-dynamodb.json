@@ -1,0 +1,32 @@
+{
+  "Records": [
+    {
+      "eventID": "1",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "Keys": {
+          "Id": {
+            "N": "101"
+          }
+        },
+        "NewImage": {
+          "Id": {
+            "N": "101"
+          },
+          "Message": {
+            "S": "Hello from DynamoDB!"
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "SequenceNumber": "111",
+        "SizeBytes": 26,
+        "EventName": "INSERT",
+        "EventSource": "aws:dynamodb",
+        "awsRegion": "eu-west-3",
+        "eventName": "INSERT",
+        "eventSourceARN": "arn:aws:dynamodb:eu-west-3:accountID:table/YourTableName/stream/2024-01-03T12:34:56.789"
+      }
+    }
+  ]
+}
+

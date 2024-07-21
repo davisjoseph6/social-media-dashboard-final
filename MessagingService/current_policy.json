@@ -1,0 +1,15 @@
+{
+    "Policy": {
+        "PolicyName": "CognitoIoTPolicy",
+        "PolicyId": "ANPAZI2LBUJPLJ6S3PLCD",
+        "Arn": "arn:aws:iam::637423166046:policy/CognitoIoTPolicy",
+        "Path": "/",
+        "DefaultVersionId": "v1",
+        "AttachmentCount": 2,
+        "PermissionsBoundaryUsageCount": 0,
+        "IsAttachable": true,
+        "CreateDate": "2024-03-16T02:28:39Z",
+        "UpdateDate": "2024-03-16T02:28:39Z",
+        "Tags": []
+    }
+}

@@ -1,0 +1,122 @@
+service: social-media-dashboard
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+  environment:
+    USERS_TABLE: usersTable
+    POSTS_TABLE: postsTable
+    MESSAGES_TABLE: messagesTable
+    ANALYTICS_TABLE: analyticsTable
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:*"
+          Resource: "*"
+
+functions:
+  userRegistration:
+    handler: handlers/userRegistration.handler
+    events:
+      - http:
+          path: users/register
+          method: post
+  userLogin:
+    handler: handlers/userLogin.handler
+    events:
+      - http:
+          path: users/login
+          method: post
+  createPost:
+    handler: handlers/createPost.handler
+    events:
+      - http:
+          path: posts
+          method: post
+  deletePost:
+    handler: handlers/deletePost.handler
+    events:
+      - http:
+          path: posts/{id}
+          method: delete
+  sendMessage:
+    handler: handlers/sendMessage.handler
+    events:
+      - http:
+          path: messages/send
+          method: post
+  chatbotInteraction:
+    handler: handlers/chatbotInteraction.handler
+    events:
+      - http:
+          path: chatbot
+          method: post
+  fetchAnalytics:
+    handler: handlers/fetchAnalytics.handler
+    events:
+      - http:
+          path: analytics/{userId}
+          method: get
+
+package:
+  individually: true
+  excludeDevDependencies: true
+  exclude:
+    - node_modules/**
+    - test/**
+    - .gitignore
+    - README.md
+    - .git/**
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.USERS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    postsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.POSTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: postId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: postId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    messagesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.MESSAGES_TABLE}
+        AttributeDefinitions:
+          - AttributeName: messageId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: messageId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    analyticsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.ANALYTICS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: analyticsId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: analyticsId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+

@@ -1,0 +1,109 @@
+service: social-media-dashboard  # Update the service name as needed
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+  environment:
+    POSTS_TABLE: postsTable
+    ANALYTICS_TABLE: analyticsTable  # Reference the existing analyticsTable
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:Query"
+            - "dynamodb:Scan"
+            - "dynamodb:GetItem"
+            - "dynamodb:PutItem"
+            - "dynamodb:UpdateItem"
+            - "dynamodb:DeleteItem"
+          Resource: "arn:aws:dynamodb:eu-west-3:637423166046:table/postsTable"
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:Query"
+            - "dynamodb:Scan"
+            - "dynamodb:GetItem"
+            - "dynamodb:PutItem"
+          Resource: "arn:aws:dynamodb:eu-west-3:637423166046:table/analyticsTable"
+        - Effect: "Allow"
+          Action:
+            - "s3:GetObject"
+          Resource: "arn:aws:s3:::analytics-service-dev-serverlessdeploymentbucket-iky5wevabpyu/*"
+
+plugins:
+  - serverless-package-external
+
+functions:
+  createPost:
+    handler: handler.createPost
+    events:
+      - http:
+          path: posts
+          method: post
+          cors: true
+    package:
+      include:
+        - AnalyticsService/**   
+        - handler.js            
+      exclude:
+        - node_modules/**      
+
+  deletePost:
+    handler: handler.deletePost
+    events:
+      - http:
+          path: posts/{postId}
+          method: delete
+          cors: true
+    package:
+      include:
+        - AnalyticsService/**   
+        - handler.js            
+      exclude:
+        - node_modules/**      
+
+  likePost:
+    handler: handler.likePost
+    events:
+      - http:
+          path: posts/{postId}/like
+          method: post
+          cors: true
+    package:
+      include:
+        - AnalyticsService/**   
+        - handler.js            
+      exclude:
+        - node_modules/**      
+
+  readPosts:
+    handler: handler.readPosts
+    events:
+      - http:
+          path: posts
+          method: get
+          cors: true
+    package:
+      include:
+        - AnalyticsService/**   
+        - handler.js            
+      exclude:
+        - node_modules/**      
+
+resources:
+  Resources:
+    postsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.POSTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: "postId"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "postId"
+            KeyType: "HASH"
+        BillingMode: PAY_PER_REQUEST
+

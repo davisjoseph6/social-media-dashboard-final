@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Test</title>
+</head>
+<body>
+    <h2>API Test</h2>
+    <button id="fetchData">Fetch Data</button>
+    <pre id="apiResponse">API response will appear here...</pre>
+
+    <script>
+        document.getElementById('fetchData').addEventListener('click', function() {
+            // Adjust the endpoint URL and method for your GET request
+            fetch('https://l6idca5v2j.execute-api.eu-west-3.amazonaws.com/dev/messages/retrieve/user1_user2', {
+                method: 'GET', // Use 'GET' for fetching data
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+                // Note: 'body' is not needed for GET requests, so it's omitted here
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('apiResponse').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch((error) => {
+                document.getElementById('apiResponse').textContent = 'Error: ' + error;
+            });
+
+            // Uncomment and adjust the following for a POST request
+            /*
+            fetch('https://l6idca5v2j.execute-api.eu-west-3.amazonaws.com/dev/messages/send', {
+                method: 'POST', // Use 'POST' for sending data
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "conversationId": "user1_user2",
+                    "senderId": "user1",
+                    "receiverId": "user2",
+                    "content": "Hello there!"
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('apiResponse').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch((error) => {
+                document.getElementById('apiResponse').textContent = 'Error: ' + error;
+            });
+            */
+        });
+    </script>
+</body>
+</html>
+

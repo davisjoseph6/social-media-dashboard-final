@@ -1,0 +1,78 @@
+.posting {
+  padding: 20px;
+}
+
+.post-form textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.post-form button {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 10px 24px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.post-form button:hover {
+  background-color: #45a049;
+}
+
+.post {
+  border: 1px solid #ccc;
+  margin: 20px 0;
+  padding: 10px;
+  display: flex;
+  align-items: start;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.post-content h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.post-content p {
+  margin: 0 0 10px 0;
+}
+
+.post-actions {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.post-actions button {
+  background-color: #008CBA; /* Blue */
+  color: white;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.post-actions button:hover {
+  background-color: #007B9A;
+}
+
+.post-actions span {
+  margin-left: 10px;
+}
+

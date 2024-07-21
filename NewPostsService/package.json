@@ -1,0 +1,18 @@
+{
+  "name": "postsservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1560.0"
+  },
+  "devDependencies": {
+    "serverless-package-external": "^1.3.5"
+  }
+}

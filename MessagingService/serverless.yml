@@ -1,0 +1,77 @@
+service: messaging-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-3
+  environment:
+    MESSAGES_TABLE: messagesTable
+    COGNITO_IDENTITY_POOL_ID: "eu-west-3:13ba40ea-518f-4e37-b188-3e17e1d73785"
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:Query"
+            - "dynamodb:PutItem"
+          Resource: 
+            - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.MESSAGES_TABLE}"
+            - "arn:aws:dynamodb:${self:provider.region}:637423166046:table/${self:provider.environment.MESSAGES_TABLE}/index/ConversationIndex"
+        - Effect: "Allow"
+          Action:
+            - "secretsmanager:GetSecretValue"
+          Resource: "arn:aws:secretsmanager:${self:provider.region}:637423166046:secret:IoT_Instant_messaging-*"
+        - Effect: "Allow"
+          Action:
+            - "iot:Connect"
+            - "iot:Publish"
+            - "iot:Subscribe"
+            - "iot:Receive"
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - "cognito-identity:GetId"
+            - "cognito-identity:GetCredentialsForIdentity"
+          Resource: "*"
+
+functions:
+  sendMessage:
+    handler: handler.sendMessage
+    events:
+      - http:
+          path: messages/send
+          method: post
+          cors: true # Enables CORS with default settings
+  getMessages:
+    handler: handler.getMessages
+    events:
+      - http:
+          path: messages/retrieve/{conversationId}
+          method: get
+          cors: true # Enables CORS with default settings
+
+resources:
+  Resources:
+    messagesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.MESSAGES_TABLE}
+        AttributeDefinitions:
+          - AttributeName: "messageId"
+            AttributeType: "S"
+          - AttributeName: "conversationId"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "messageId"
+            KeyType: "HASH"
+        GlobalSecondaryIndexes:
+          - IndexName: "ConversationIndex"
+            KeySchema:
+              - AttributeName: "conversationId"
+                KeyType: "HASH"
+            Projection:
+              ProjectionType: "ALL"
+        BillingMode: PAY_PER_REQUEST
+

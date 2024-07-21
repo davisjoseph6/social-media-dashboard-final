@@ -1,0 +1,26 @@
+service: chatbot-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-2 # Ensure this matches your Lambda function's region
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "lex:PostText"
+        - "lex:RecognizeText" # Permission for Lex RecognizeText API
+        - "dynamodb:Query" # Permission for DynamoDB Query action
+        - "dynamodb:GetItem" # Permission for DynamoDB GetItem action
+        - "dynamodb:Scan" # Added permission for DynamoDB Scan action
+      Resource: "*" # For finer control in production, specify actual ARN(s) for Lex and DynamoDB resources
+
+functions:
+  chatbotInteraction:
+    handler: handler.chatbotInteraction
+    events:
+      - http:
+          path: chatbot
+          method: post
+

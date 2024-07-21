@@ -1,0 +1,20 @@
+.auth {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.auth h1 {
+  margin-bottom: 20px;
+}
+
+.auth button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  /* Add more button styling as needed */
+}
+
