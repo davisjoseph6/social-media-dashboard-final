@@ -1,1 +1,0 @@
-{"errorType":"SyntaxError","errorMessage":"Unexpected token u in JSON at position 0","trace":["SyntaxError: Unexpected token u in JSON at position 0","    at JSON.parse (<anonymous>)","    at exports.updateUserProfile [as handler] (/var/task/handler.js:9:58)","    at Runtime.handleOnceNonStreaming (file:///var/runtime/index.mjs:1173:29)"]}

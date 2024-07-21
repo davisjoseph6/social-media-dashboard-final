@@ -1,8 +1,0 @@
-{
-  "httpMethod": "GET",
-  "path": "/quicksight-embed-url",
-  "headers": {
-    "Content-Type": "application/json"
-  }
-}
-

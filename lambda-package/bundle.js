@@ -1,1 +1,0 @@
-(()=>{var e={224:e=>{"use strict";e.exports=require("express")}},r={};function s(o){var n=r[o];if(void 0!==n)return n.exports;var t=r[o]={exports:{}};return e[o](t,t.exports,s),t.exports}(()=>{const e=s(224)(),r=process.env.PORT||3e3;e.get("/",((e,r)=>{r.send("Social Media Dashboard is running!")})),e.listen(r,(()=>{console.log("Server is listening on port ${PORT}")}))})()})();
